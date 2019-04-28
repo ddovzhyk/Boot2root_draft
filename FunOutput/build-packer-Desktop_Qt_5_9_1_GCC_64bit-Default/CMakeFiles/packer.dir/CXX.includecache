@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/dimontik/Boot2root_draft/FunOutput/packer/src/Packer.cpp
+iostream
+-
+dirent.h
+-
+stdio.h
+-
+fstream
+-
+cstring
+-
+map
+-
+

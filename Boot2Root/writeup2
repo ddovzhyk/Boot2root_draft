@@ -1,18 +1,38 @@
-1. Login using ssh with "laurie" username and "330b845f32185747e4f8ca15d40ca59796035c89ea809fb5d30f4da83ecf45a4" password that were found in writeup1 solution.
-2. Need to get information about the OS:
+1. Install and run VM VirtualBox:
+	a) Сonfigure network adapter.
+	
+2. Search the IP of VM.
+
+3. Detect all active network services.
+
+4. Scan the web server with DIRB tool.
+
+5. Find login and password in the logs on the <.../forum/> page.
+
+6. On the <.../webmail/> page, find data to access databases. Run a special SQL script to get a login and password.
+
+7. Using the "inetutils" tool, download files from ftp server. Use the login and password in step six.
+
+8. Unzip archive "fun" and run the script to get the password.
+
+9. Connect to VM using ssh protocol:
+	ssh laurie@192.168.56.101
+	Password: 30b845f32185747e4f8ca15d40ca59796035c89ea809fb5d30f4da83ecf45a4
+
+10. Need to get information about the OS:
 	a) Kernel verion is 3.2.0-91-generic-pae:
 		uname -r
 	b) Distribution name and verison are "Ubuntu, 12.04":
 		cat /etc/*-release
-3. After having information on what we where working on we did some research on EXPLOIT DATABASE (https://www.exploit-db.com/).
-4. Find the "Linux Kernel 2.6.22 < 3.9 - 'Dirty COW' 'PTRACE_POKEDATA' Race Condition Privilege Escalation.
-5. Go to https://www.exploit-db.com/exploits/40839 and copy paster the "Dirty COW" script.
-6. Compile with:
+11. After having information on what we where working on we did some research on EXPLOIT DATABASE (https://www.exploit-db.com/).
+12. Find the "Linux Kernel 2.6.22 < 3.9 - 'Dirty COW' 'PTRACE_POKEDATA' Race Condition Privilege Escalation.
+13. Go to https://www.exploit-db.com/exploits/40839 and copy paster the "Dirty COW" script.
+14. Compile with:
    	gcc -pthread dirty.c -o dirty -lcrypt
-7. Run the newly create binary by either doing:
+15. Run the newly create binary by either doing:
    	./dirty
-8. Add your own password.
-9. Execute:
+16. Add your own password.
+17. Execute:
 	su firefart
-10. Use your password.
-11. Congratulations! You are a ROOT!!!
+18. Use your password.
+19. Congratulations! You are a ROOT!!!
